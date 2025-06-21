@@ -1,0 +1,65 @@
+{
+    "name": "Multimodal-suitable_category",
+    "n_gpu": 1,
+
+    "data_loader": {
+        "type": "KGDataLoader",
+        "args":{
+            "data_dir": "data/kg_dr/prepared/",
+            "label_relationship": "suitable_category",
+            "target_entity_name": "product_category",
+            "use_multimodal": true,
+            "batch_size": 32,
+            "seed": 0,
+            "shuffle": true,
+            "validation_split": 0.1,
+            "test_split": 0.2,
+            "num_workers": 2
+        }
+    },
+
+    "arch": {
+        "type": "GCN",
+        "args": {
+            "emb_dim": 16,
+            "layersize": [16, 16, 16],
+            "dropout": 0.1
+        }
+    },
+
+    
+
+    "optimizer": {
+        "type": "Adam",
+        "args":{
+            "lr": 0.001,
+            "weight_decay": 0.001,
+            "amsgrad": true
+        }
+    },
+
+    "loss": "bce_withlogits_loss",
+    "metrics": [
+        "accuracy", "recall", "roc_auc", "pr_auc", "f1_score"
+    ],
+    "lr_scheduler": {
+        "type": "StepLR",
+        "args": {
+            "step_size": 50,
+            "gamma": 0.1
+        }
+    },
+
+    "trainer": {
+        "epochs": 100,
+
+        "save_dir": "saved/gcn/",
+        "save_period": 50,
+        "verbosity": 2,
+        
+        "monitor": "max val_roc_auc",
+        "early_stop": 5,
+
+        "tensorboard": true
+    }
+}
